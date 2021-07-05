@@ -10,8 +10,10 @@ class TextRank:
         self.d = 0.85
         self.window_size = 2
         self.keyword = input("키워드를 입력해주세요: ")
+        print("키워드: ", self.keyword)
     
     # 메인 실행 함수
+    # input: articles (article 모은 리스트)
     def text_rank(self, articles):
         articles_tokenized = self.preprocess_articles(articles)
         n_grams = self.n_grams(articles_tokenized)
@@ -21,6 +23,7 @@ class TextRank:
         self.result(pagerank, word_index)
             
     # Article내에서 각 sentence 토큰화
+    # input: article (단일 article)
     def preprocess_sent(self, article):
         sentences = []
         k = klt2000()
@@ -33,6 +36,7 @@ class TextRank:
         return sentences
     
     # 모든 Articles 토큰화
+    # input: articles (article 모은 리스트)
     def preprocess_articles(self, articles):
         articles_tokenized = []
         for article in articles:
@@ -40,7 +44,8 @@ class TextRank:
             articles_tokenized.append(sentences)
         return articles_tokenized
 
-    # Article의 각 단어 출현횟수 카운트    
+    # Article의 각 단어 출현횟수 카운트 
+    # input: sentences (문장 리스트)
     def word_count(self, sentences):
         word_count = {}
         for sentence in sentences:
@@ -52,6 +57,7 @@ class TextRank:
         return word_count
     
     # 문장 리스트를 입력으로 받아 word_index 생성
+    # input: sentences (문장 리스트)
     def word_index(self, sentences):
         word_index = {}
         idx = 0
@@ -65,6 +71,7 @@ class TextRank:
         return word_index
     
     # 단어 리스트를 입력으로 받아 word_index 생성
+    # input: words (단어 리스트)
     def word_index_word_list(self, words):
         word_index = {}
         idx = 0
@@ -75,8 +82,9 @@ class TextRank:
         return word_index
     
     # keyword근처에 있는 단어들로 n_gram 생성
+    # input: articles_tokenized (articles의 모든 단어들 토큰화한 리스트)
     def n_grams(self, articles_tokenized):
-        n_gram = []
+        n_grams = []
         for article in articles_tokenized:
             for sentence in article:
                 for i in range(len(sentence)):
@@ -87,10 +95,10 @@ class TextRank:
                                 continue
                             n_gram.append(sentence[j])
                         n_grams.append(n_gram)
-        print(keyword, n_grams)
         return n_grams
         
     # window_size에 맞춰 word pair 생성
+    # input: sentences (문장 리스트)
     def pair_words(self, sentences):
         pairs = []
         for sentence in sentences:
@@ -102,6 +110,7 @@ class TextRank:
         return pairs
     
     # n_grams을 입력으로 받아 word_index 생성
+    # input: n_grams
     def word_index_n_grams(self, n_grams):
         words = set()
         for n_gram in n_grams:
@@ -111,6 +120,7 @@ class TextRank:
         return word_index
     
     # word pairs z입력받아 term to term matrix 생성
+    # input: n_grams, word_index
     def term_matrix(self, n_grams, word_index):
         matrix = np.zeros((len(word_index), len(word_index)))
 
@@ -128,6 +138,7 @@ class TextRank:
         return matrix
     
     # pagerank 알고리즘 반복
+    # input: matrix, word_index
     def iteration(self, matrix, word_index):
         pagerank = np.array([1]*len(word_index))
 
@@ -136,11 +147,12 @@ class TextRank:
         return pagerank
     
     # 출력 결과
+    # input: pagerank (페이지랭크 점수), word_index
     def result(self, pagerank, word_index):
         node_weight = {}
         for word, index in word_index.items():
             node_weight[word] = pagerank[index]
 
         res = sorted(node_weight.items(), key=lambda x: -x[1])
-        print("=== 상위 5개 키워드 ===")
-        print(print([word[0] for word in res[:10]]), '\n')
+        print("=== 상위 10개 키워드 ===")
+        print(print([[word[0], round(word[1], 3)] for word in res[:10]]), '\n')
