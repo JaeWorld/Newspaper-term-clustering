@@ -4,6 +4,8 @@ import numpy as np
 from konlp.kma.klt2000 import klt2000
 import re
 
+print("Test log")
+
 class TextRank:
     def __init__(self):
         self.num_of_words = 0
