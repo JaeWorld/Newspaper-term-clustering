@@ -4,7 +4,7 @@ import numpy as np
 from konlp.kma.klt2000 import klt2000
 import re
 
-print("Test log")
+print("Test log 2")
 
 class TextRank:
     def __init__(self):
